@@ -36,7 +36,7 @@ export default function OnOffSwitch({ deviceId }: OnOffSwitchProps) {
     };
 
     fetchData();
-  }, []);
+  });
 
   const handleToggle = async () => {
     const newChecked = !checked;
