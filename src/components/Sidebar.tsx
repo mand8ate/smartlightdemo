@@ -1,122 +1,52 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+"use client";
+
+import React from "react";
+import { Home, MapPin, Grid, Settings } from "lucide-react";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Home, LandPlot, User } from "lucide-react";
-import { getAuthSession } from "@/lib/auth";
-import LogoutButton from "./LogoutButton";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-export default async function Sidebar() {
-  const session = await getAuthSession();
-
-  return (
-    <aside className="bg-foreground w-16 h-[600px] rounded-l-md flex items-center py-6 border-r border-background/20 flex-col justify-between">
-      <ul className="flex flex-col gap-6">
-        <li>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link href="/">
-                  <div className="w-6 h-6 relative">
-                    <Image
-                      src="/cloudsmartiot.png"
-                      alt="cloudsmartiot logo"
-                      fill
-                    />
-                  </div>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="bg-foreground text-background border-background/20"
-              >
-                ホーム
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </li>
-        {session ? (
-          <>
-            <li>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href="/dashboard">
-                      <Home className="w-6 h-6 hover:text-background text-accent/80 transition-colors" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="bg-foreground text-background border-background/20"
-                  >
-                    ダッシュボード
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </li>
-            <li>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href="/locations">
-                      <LandPlot className="w-6 h-6 hover:text-background text-accent/80 transition-colors" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="bg-foreground text-background border-background/20"
-                  >
-                    ロケーション
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </li>
-          </>
-        ) : (
-          ""
-        )}
-      </ul>
-      <ul>
-        {!session ? (
-          <li>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href="/signin">
-                    <User className="w-6 h-6 hover:text-background text-accent/80 transition-colors" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="bg-foreground text-background border-background/20"
-                >
-                  ログイン
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </li>
-        ) : (
-          <li>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <LogoutButton />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="bg-foreground text-background border-background/20"
-                >
-                  ログアウト
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </li>
-        )}
-      </ul>
-    </aside>
-  );
+interface NavItem {
+	icon: React.ReactNode;
+	label: string;
+	href: string;
 }
+
+export const SideNav = () => {
+	const pathname = usePathname();
+
+	const navItems: NavItem[] = [
+		{ icon: <Home size={24} />, label: "Home", href: "/dashboard" },
+		{
+			icon: <MapPin size={24} />,
+			label: "Locations",
+			href: "/dashboard/locations",
+		},
+		{ icon: <Grid size={24} />, label: "Rooms", href: "/dashboard/rooms" },
+		{
+			icon: <Settings size={24} />,
+			label: "Services",
+			href: "/dashboard/services",
+		},
+	];
+
+	return (
+		<nav className="w-20 bg-black flex flex-col items-center py-6 justify-center">
+			{navItems.map((item, index) => (
+				<Link
+					key={index}
+					href={item.href}
+					className={cn(
+						"w-full p-4 flex flex-col items-center gap-1",
+						"text-gray-400 hover:text-white transition-colors",
+						pathname === item.href &&
+							"text-white border-l-2 border-blue-500"
+					)}
+				>
+					{item.icon}
+					<span className="text-xs">{item.label}</span>
+				</Link>
+			))}
+		</nav>
+	);
+};

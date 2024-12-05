@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,15 +14,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -44,44 +37,56 @@ model Session {
   @@map("sessions")
 }
 
+model Location {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ownerId   String   @map("owner_id")
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  rooms     Room[]
+
+  @@map("locations")
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   password      String
-  emailVerified DateTime? @map("email_verified")
+  emailVerified DateTime?  @map("email_verified")
   image         String?
   accounts      Account[]
+  locations     Location[]
+  rooms         Room[]
   sessions      Session[]
-
-  rooms Room[]
 
   @@map("users")
 }
 
 model Room {
-  id      String   @id @default(cuid())
-  name    String?
-  ownerId String   @map("owner_id")
-  devices Device[]
-  owner   User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  name       String?
+  ownerId    String   @map("owner_id")
+  locationId String   @map("location_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  devices    Device[]
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  owner      User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@map("rooms")
 }
 
-enum DeviceStatus {
-  ON
-  OFF
-}
-
 model Device {
-  id       String       @id @default(cuid())
-  name     String?
-  type     String?
-  status   DeviceStatus
-  deviceId String
-  roomId   String       @map("room_id")
-  room     Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  name      String?
+  type      String?
+  deviceId  String
+  roomId    String   @map("room_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@map("devices")
 }

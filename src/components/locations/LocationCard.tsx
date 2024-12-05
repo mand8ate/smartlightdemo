@@ -110,7 +110,7 @@ export function LocationCard({
 						</AlertDialogContent>
 					</AlertDialog>
 				</div>
-				<Link href={`/dashboard/locations/${location.name}`}>
+				<Link href={`/dashboard/locations/${location.id}`}>
 					<div className="text-center px-4">
 						<h2 className="text-3xl font-bold mb-4 text-center">
 							{location.name}
