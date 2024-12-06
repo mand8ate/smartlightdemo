@@ -1,8 +1,8 @@
-// components/devices/controls/DeviceControls.tsx
 import { Device } from "@prisma/client";
 import { StripLightControls } from "./StripLightControls";
 import { ColorBulbControls } from "./ColorBulbControls";
 import { PlugControls } from "./PlugControls";
+import { TVControls } from "./TVControls";
 
 interface DeviceControlsProps {
 	device: Device;
@@ -27,6 +27,14 @@ export function DeviceControls({
 		case "Color Bulb":
 			return (
 				<ColorBulbControls
+					deviceId={device.deviceId}
+					isLoading={isLoading}
+					onCommand={onCommand}
+				/>
+			);
+		case "IR_TV":
+			return (
+				<TVControls
 					deviceId={device.deviceId}
 					isLoading={isLoading}
 					onCommand={onCommand}
