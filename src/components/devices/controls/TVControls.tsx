@@ -1,13 +1,4 @@
-import {
-	Power,
-	Volume2,
-	VolumeX,
-	ChevronUp,
-	ChevronDown,
-	Menu,
-	ArrowLeft,
-	ArrowRight,
-} from "lucide-react";
+import { Power, MonitorUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
@@ -101,82 +92,16 @@ export function TVControls({
 				)}
 			</Button>
 
-			{/* Volume and Channel Controls */}
-			<div className="grid grid-cols-2 gap-4">
-				<div className="space-y-2">
-					<Button
-						onClick={() => handleCommand("volumeUp")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<Volume2 className="w-4 h-4 mr-2" />
-						Volume Up
-					</Button>
-					<Button
-						onClick={() => handleCommand("volumeDown")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<VolumeX className="w-4 h-4 mr-2" />
-						Volume Down
-					</Button>
-				</div>
-				<div className="space-y-2">
-					<Button
-						onClick={() => handleCommand("channelUp")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<ChevronUp className="w-4 h-4 mr-2" />
-						Channel Up
-					</Button>
-					<Button
-						onClick={() => handleCommand("channelDown")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<ChevronDown className="w-4 h-4 mr-2" />
-						Channel Down
-					</Button>
-				</div>
-			</div>
-
-			{/* Navigation Controls */}
-			<div className="space-y-2">
-				<Button
-					onClick={() => handleCommand("menu")}
-					disabled={isLoading}
-					variant="ghost"
-					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<Menu className="w-4 h-4 mr-2" />
-					Menu
-				</Button>
-				<div className="grid grid-cols-2 gap-2">
-					<Button
-						onClick={() => handleCommand("previous")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<ArrowLeft className="w-4 h-4 mr-2" />
-						Previous
-					</Button>
-					<Button
-						onClick={() => handleCommand("next")}
-						disabled={isLoading}
-						variant="ghost"
-						className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-					>
-						<ArrowRight className="w-4 h-4 mr-2" />
-						Next
-					</Button>
-				</div>
-			</div>
+			{/* Input Source */}
+			<Button
+				onClick={() => handleCommand("input")}
+				disabled={isLoading}
+				variant="ghost"
+				className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+			>
+				<MonitorUp className="w-4 h-4 mr-2" />
+				Change Input
+			</Button>
 		</div>
 	);
 }
