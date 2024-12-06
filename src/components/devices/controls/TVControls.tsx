@@ -94,7 +94,7 @@ export function TVControls({
 
 			{/* Input Source */}
 			<Button
-				onClick={() => handleCommand("input")}
+				onClick={() => handleCommand("inputSource")}
 				disabled={isLoading}
 				variant="ghost"
 				className="w-full bg-slate-800/30 hover:bg-slate-700/50"
