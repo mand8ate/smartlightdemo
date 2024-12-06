@@ -1,14 +1,6 @@
-import {
-	Power,
-	Volume2,
-	VolumeX,
-	ChevronUp,
-	ChevronDown,
-	Hash,
-} from "lucide-react";
+import { Power, MonitorUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 
 interface DeviceState {
 	power: "on" | "off";
@@ -17,7 +9,11 @@ interface DeviceState {
 interface TVControlsProps {
 	deviceId: string;
 	isLoading: boolean;
-	onCommand: (command: string, parameter?: any) => Promise<void>;
+	onCommand: (
+		command: string,
+		parameter?: any,
+		commandType?: string
+	) => Promise<void>;
 }
 
 export function TVControls({
@@ -28,7 +24,6 @@ export function TVControls({
 	const [deviceState, setDeviceState] = useState<DeviceState>({
 		power: "off",
 	});
-	const [channelNumber, setChannelNumber] = useState<string>("");
 
 	const fetchDeviceState = async () => {
 		try {
@@ -49,18 +44,11 @@ export function TVControls({
 		fetchDeviceState();
 	}, [deviceId]);
 
-	const handleCommand = async (command: string, parameter?: string) => {
-		await onCommand(command, parameter);
-		if (command === "turnOn" || command === "turnOff") {
+	const handleCommand = async (command: string) => {
+		// Using customize command type for custom button names
+		await onCommand(command, undefined, "customize");
+		if (command === "On/Off") {
 			setTimeout(() => fetchDeviceState(), 1000);
-		}
-	};
-
-	const handleChannelSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		if (channelNumber) {
-			handleCommand("SetChannel", channelNumber);
-			setChannelNumber("");
 		}
 	};
 
@@ -83,13 +71,9 @@ export function TVControls({
 				</div>
 			</div>
 
-			{/* Power Control */}
+			{/* Power Control - Custom "On/Off" button */}
 			<Button
-				onClick={() =>
-					handleCommand(
-						deviceState.power === "on" ? "turnOff" : "turnOn"
-					)
-				}
+				onClick={() => handleCommand("On/Off")}
 				disabled={isLoading}
 				variant="ghost"
 				className={`w-full relative group hover:bg-slate-700/50 
@@ -103,75 +87,22 @@ export function TVControls({
 					className={`w-4 h-4 mr-2 transition-colors
           ${deviceState.power === "on" ? "text-green-400" : "text-white/70"}`}
 				/>
-				{deviceState.power === "on" ? "Turn Off" : "Turn On"}
+				Power
 				{deviceState.power === "on" && (
 					<div className="absolute inset-0 bg-green-500/5" />
 				)}
 			</Button>
 
-			{/* Volume Controls */}
-			<div className="grid grid-cols-2 gap-2">
-				<Button
-					onClick={() => handleCommand("volumeAdd")}
-					disabled={isLoading}
-					variant="ghost"
-					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<Volume2 className="w-4 h-4 mr-2" />
-					Volume Up
-				</Button>
-				<Button
-					onClick={() => handleCommand("volumeSub")}
-					disabled={isLoading}
-					variant="ghost"
-					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<VolumeX className="w-4 h-4 mr-2" />
-					Volume Down
-				</Button>
-			</div>
-
-			{/* Channel Controls */}
-			<div className="grid grid-cols-2 gap-2">
-				<Button
-					onClick={() => handleCommand("channelAdd")}
-					disabled={isLoading}
-					variant="ghost"
-					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<ChevronUp className="w-4 h-4 mr-2" />
-					Channel Up
-				</Button>
-				<Button
-					onClick={() => handleCommand("channelSub")}
-					disabled={isLoading}
-					variant="ghost"
-					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<ChevronDown className="w-4 h-4 mr-2" />
-					Channel Down
-				</Button>
-			</div>
-
-			{/* Channel Number Input */}
-			<form onSubmit={handleChannelSubmit} className="flex gap-2">
-				<Input
-					type="number"
-					placeholder="Enter channel number"
-					value={channelNumber}
-					onChange={(e) => setChannelNumber(e.target.value)}
-					className="bg-slate-800/30 border-slate-700 text-white"
-				/>
-				<Button
-					type="submit"
-					disabled={isLoading || !channelNumber}
-					variant="ghost"
-					className="bg-slate-800/30 hover:bg-slate-700/50"
-				>
-					<Hash className="w-4 h-4 mr-2" />
-					Set
-				</Button>
-			</form>
+			{/* Source Button */}
+			<Button
+				onClick={() => handleCommand("Source")}
+				disabled={isLoading}
+				variant="ghost"
+				className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+			>
+				<MonitorUp className="w-4 h-4 mr-2" />
+				Source
+			</Button>
 		</div>
 	);
 }
