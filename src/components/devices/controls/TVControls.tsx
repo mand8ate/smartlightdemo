@@ -1,6 +1,14 @@
-import { Power, MonitorUp } from "lucide-react";
+import {
+	Power,
+	Volume2,
+	VolumeX,
+	ChevronUp,
+	ChevronDown,
+	Hash,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 interface DeviceState {
 	power: "on" | "off";
@@ -20,6 +28,7 @@ export function TVControls({
 	const [deviceState, setDeviceState] = useState<DeviceState>({
 		power: "off",
 	});
+	const [channelNumber, setChannelNumber] = useState<string>("");
 
 	const fetchDeviceState = async () => {
 		try {
@@ -40,10 +49,18 @@ export function TVControls({
 		fetchDeviceState();
 	}, [deviceId]);
 
-	const handleCommand = async (command: string) => {
-		await onCommand(command);
+	const handleCommand = async (command: string, parameter?: string) => {
+		await onCommand(command, parameter);
 		if (command === "turnOn" || command === "turnOff") {
 			setTimeout(() => fetchDeviceState(), 1000);
+		}
+	};
+
+	const handleChannelSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		if (channelNumber) {
+			handleCommand("SetChannel", channelNumber);
+			setChannelNumber("");
 		}
 	};
 
@@ -92,16 +109,69 @@ export function TVControls({
 				)}
 			</Button>
 
-			{/* Input Source */}
-			<Button
-				onClick={() => handleCommand("inputSource")}
-				disabled={isLoading}
-				variant="ghost"
-				className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-			>
-				<MonitorUp className="w-4 h-4 mr-2" />
-				Change Input
-			</Button>
+			{/* Volume Controls */}
+			<div className="grid grid-cols-2 gap-2">
+				<Button
+					onClick={() => handleCommand("volumeAdd")}
+					disabled={isLoading}
+					variant="ghost"
+					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+				>
+					<Volume2 className="w-4 h-4 mr-2" />
+					Volume Up
+				</Button>
+				<Button
+					onClick={() => handleCommand("volumeSub")}
+					disabled={isLoading}
+					variant="ghost"
+					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+				>
+					<VolumeX className="w-4 h-4 mr-2" />
+					Volume Down
+				</Button>
+			</div>
+
+			{/* Channel Controls */}
+			<div className="grid grid-cols-2 gap-2">
+				<Button
+					onClick={() => handleCommand("channelAdd")}
+					disabled={isLoading}
+					variant="ghost"
+					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+				>
+					<ChevronUp className="w-4 h-4 mr-2" />
+					Channel Up
+				</Button>
+				<Button
+					onClick={() => handleCommand("channelSub")}
+					disabled={isLoading}
+					variant="ghost"
+					className="w-full bg-slate-800/30 hover:bg-slate-700/50"
+				>
+					<ChevronDown className="w-4 h-4 mr-2" />
+					Channel Down
+				</Button>
+			</div>
+
+			{/* Channel Number Input */}
+			<form onSubmit={handleChannelSubmit} className="flex gap-2">
+				<Input
+					type="number"
+					placeholder="Enter channel number"
+					value={channelNumber}
+					onChange={(e) => setChannelNumber(e.target.value)}
+					className="bg-slate-800/30 border-slate-700 text-white"
+				/>
+				<Button
+					type="submit"
+					disabled={isLoading || !channelNumber}
+					variant="ghost"
+					className="bg-slate-800/30 hover:bg-slate-700/50"
+				>
+					<Hash className="w-4 h-4 mr-2" />
+					Set
+				</Button>
+			</form>
 		</div>
 	);
 }
