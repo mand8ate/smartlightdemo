@@ -1,4 +1,4 @@
-import { Power, MonitorUp } from "lucide-react";
+import { Power } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
@@ -44,16 +44,14 @@ export function TVControls({
 		fetchDeviceState();
 	}, [deviceId]);
 
-	const handleCommand = async (command: string) => {
-		// Using customize command type for custom button names
-		await onCommand(command, undefined, "customize");
-		if (command === "On/Off") {
-			setTimeout(() => fetchDeviceState(), 1000);
-		}
+	const handleCommand = async () => {
+		await onCommand("turnOn", undefined, "command");
+		// Wait a second before refreshing the state
+		setTimeout(() => fetchDeviceState(), 1000);
 	};
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 p-4">
 			{/* Status Bar */}
 			<div className="flex items-center justify-between px-2">
 				<span className="text-sm text-gray-400">Status</span>
@@ -71,9 +69,9 @@ export function TVControls({
 				</div>
 			</div>
 
-			{/* Power Control - Custom "On/Off" button */}
+			{/* Power Control */}
 			<Button
-				onClick={() => handleCommand("On/Off")}
+				onClick={handleCommand}
 				disabled={isLoading}
 				variant="ghost"
 				className={`w-full relative group hover:bg-slate-700/50 
@@ -91,17 +89,6 @@ export function TVControls({
 				{deviceState.power === "on" && (
 					<div className="absolute inset-0 bg-green-500/5" />
 				)}
-			</Button>
-
-			{/* Source Button */}
-			<Button
-				onClick={() => handleCommand("Source")}
-				disabled={isLoading}
-				variant="ghost"
-				className="w-full bg-slate-800/30 hover:bg-slate-700/50"
-			>
-				<MonitorUp className="w-4 h-4 mr-2" />
-				Source
 			</Button>
 		</div>
 	);
